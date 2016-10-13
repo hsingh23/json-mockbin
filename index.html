@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/codemirror.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/codemirror.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"></script>
+    {# <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"></script> #}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/mode/javascript/javascript.min.js"></script>
 
     <style>
@@ -35,12 +35,12 @@
   <p>
     <button id="button">Submit</button>
   </p>
-  <button id="copy" style="display: block-inline" data-clipboard-target="#result"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-clippy.svg/1050px-Octicons-clippy.svg.png" width="20px" height="20px"></button><h2>Results</h2>
+  <h2>Results</h2>
   <pre id="result"></pre>
       <script>
       window.onload = function () {
         var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("source"),{mode:{name: "javascript", json: true}, lineNumbers:true, autofocus: true});
-        new Clipboard('#copy');
+        // new Clipboard('#copy');
         document.getElementById("button").onclick = function () {
           try {
             var result = jsonlint.parse(myCodeMirror.getValue());
@@ -80,7 +80,9 @@
               }
 
               $.ajax(settings).done(function (response) {
-                document.getElementById("result").innerHTML = "http://mockbin.com/bin/" + response;
+                var url = "http://mockbin.com/bin/" + response
+                window.open(url);
+                document.getElementById("result").innerHTML = url;
                 document.getElementById("result").className = "pass";
               });
             }
