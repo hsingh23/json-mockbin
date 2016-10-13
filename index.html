@@ -81,10 +81,7 @@
 
               $.ajax(settings).done(function (response) {
                 document.getElementById("result").innerHTML = "http://mockbin.com/bin/" + response;
-                document.querySelector("#result").select();
-                document.execCommand('copy');
                 document.getElementById("result").className = "pass";
-
               });
             }
           } catch(e) {
