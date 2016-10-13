@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>JSON Mockbin</title>
+    <script src="lib.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/codemirror.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/codemirror.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/mode/javascript/javascript.min.js"></script>
+
+    <style>
+      body {font-family: sans-serif;}
+      #result {
+        padding: 1em;
+      }
+      .pass {
+        background-color: #efe;
+        color: #393;
+        border: 2px solid #393;
+      }
+      .fail {
+        background-color: #fee;
+        color: #933;
+        border: 2px solid #933;
+      }
+      textarea { width: 100%; }
+    </style>
+</head>
+<body>
+  <h1>Json Mockbin</h1>
+  <h3>Put json in a mockbin</h3>
+  <textarea id="source" rows="40" cols="50"></textarea>
+  <p>
+    <button id="button">Submit</button>
+  </p>
+  <button id="copy" style="display: block-inline" data-clipboard-target="#result"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-clippy.svg/1050px-Octicons-clippy.svg.png" width="20px" height="20px"></button><h2>Results</h2>
+  <pre id="result"></pre>
+      <script>
+      window.onload = function () {
+        var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("source"),{mode:{name: "javascript", json: true}, lineNumbers:true, autofocus: true});
+        new Clipboard('#copy');
+        document.getElementById("button").onclick = function () {
+          try {
+            var result = jsonlint.parse(myCodeMirror.getValue());
+            if (result) {
+              var body = JSON.stringify(result);
+              var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "http://mockbin.com/bin/create",
+                "method": "POST",
+                "headers": {
+                  "content-type": "application/javascript"
+                },
+                "data": JSON.stringify({
+                  "status": 200,
+                  "statusText": "OK",
+                  "httpVersion": "HTTP/1.1",
+                  "headers": [
+                    {
+                      "name": "access-control-allow-origin",
+                      "value": "*"
+                    },
+                    {
+                      "name": "content-type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookies": [],
+                  "content": {
+                    "mimeType": "application/json",
+                    "text": body
+                  },
+                  "redirectURL": "",
+                  "bodySize": 0,
+                  "headersSize": 0
+                })
+              }
+
+              $.ajax(settings).done(function (response) {
+                document.getElementById("result").innerHTML = "http://mockbin.com/bin/" + response;
+                document.querySelector("#result").select();
+                document.execCommand('copy');
+                document.getElementById("result").className = "pass";
+
+              });
+            }
+          } catch(e) {
+            document.getElementById("result").innerHTML = e;
+            document.getElementById("result").className = "fail";
+          }
+        };
+      }
+    </script>
+</body>
+</html>
